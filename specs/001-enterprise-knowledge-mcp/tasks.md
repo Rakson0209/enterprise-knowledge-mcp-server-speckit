@@ -79,15 +79,15 @@ tests in `tests/`. Layout per [plan.md](./plan.md).
 
 ### Tests for User Story 1 (write first) ⚠️
 
-- [ ] T019 [P] [US1] `tests/test_retriever.py`: dense+BM25 candidates, RRF fusion (k=60), CJK+Latin tokenizer, exact-term recall, BM25 refresh from Chroma
-- [ ] T020 [P] [US1] `tests/test_mcp_tools.py` (search portion): `search_documents` output shape (content+metadata+score), empty-query error, empty-index empty list
-- [ ] T021 [P] [US1] `tests/test_mcp_integration.py` (search): FastMCP in-memory JSON-RPC — discovery, input schema, structured output for `search_documents`
+- [X] T019 [P] [US1] `tests/test_retriever.py`: dense+BM25 candidates, RRF fusion (k=60), CJK+Latin tokenizer, exact-term recall, BM25 refresh from Chroma
+- [X] T020 [P] [US1] `tests/test_mcp_tools.py` (search portion): `search_documents` output shape (content+metadata+score), empty-query error, empty-index empty list
+- [X] T021 [P] [US1] `tests/test_mcp_integration.py` (search): FastMCP in-memory JSON-RPC — discovery, input schema, structured output for `search_documents`
 
 ### Implementation for User Story 1
 
-- [ ] T022 [US1] Implement `app/services/retriever.py`: hybrid dense+BM25 with RRF fusion, CJK+Latin tokenizer, BM25 corpus rebuilt from Chroma, `refresh()`, `get_retriever()` singleton (depends on T014)
-- [ ] T023 [US1] Add `search_documents(query, top_k)` tool to `app/mcp_server.py`: returns `SearchResult` list, logs `MCP tool invoked: search_documents | query=... top_k=...` and retrieved chunk ids (FR-011)
-- [ ] T024 [P] [US1] Add `tests/mcp_client_demo.py`: runnable client against a live server producing inspectable tool-call logs (FR-022)
+- [X] T022 [US1] Implement `app/services/retriever.py`: hybrid dense+BM25 with RRF fusion, CJK+Latin tokenizer, BM25 corpus rebuilt from Chroma, `refresh()`, `get_retriever()` singleton (depends on T014)
+- [X] T023 [US1] Add `search_documents(query, top_k)` tool to `app/mcp_server.py`: returns `SearchResult` list, logs `MCP tool invoked: search_documents | query=... top_k=...` and retrieved chunk ids (FR-011)
+- [X] T024 [P] [US1] Add `tests/mcp_client_demo.py`: runnable client against a live server producing inspectable tool-call logs (FR-022)
 
 **Checkpoint**: US1 works independently — seeded corpus is searchable via MCP with citations and logs. **This is the MVP.**
 
@@ -101,13 +101,13 @@ tests in `tests/`. Layout per [plan.md](./plan.md).
 
 ### Tests for User Story 2 (write first) ⚠️
 
-- [ ] T025 [P] [US2] `tests/test_upload.py`: type validation (415), size limit (413), successful upload→index (201 + num_chunks), upload-then-search visibility with no restart, thread-pool non-blocking
-- [ ] T026 [P] [US2] `tests/test_health.py`: `/health` liveness
+- [X] T025 [P] [US2] `tests/test_upload.py`: type validation (415), size limit (413), successful upload→index (201 + num_chunks), upload-then-search visibility with no restart, thread-pool non-blocking
+- [X] T026 [P] [US2] `tests/test_health.py`: `/health` liveness
 
 ### Implementation for User Story 2
 
-- [ ] T027 [US2] Implement `app/api/documents.py` `POST /documents`: multipart upload, extension allowlist + size check, run `pipeline` in a thread pool, refresh retriever BM25, return `{document_id,status,num_chunks}` (depends on T015, T022)
-- [ ] T028 [US2] Wire the router into `app/main.py` and ensure shared singletons make new docs instantly visible to MCP search (FR-012)
+- [X] T027 [US2] Implement `app/api/documents.py` `POST /documents`: multipart upload, extension allowlist + size check, run `pipeline` in a thread pool, refresh retriever BM25, return `{document_id,status,num_chunks}` (depends on T015, T022)
+- [X] T028 [US2] Wire the router into `app/main.py` and ensure shared singletons make new docs instantly visible to MCP search (FR-012)
 
 **Checkpoint**: US1 + US2 both work — live upload feeds the same index MCP search reads.
 
@@ -121,16 +121,16 @@ tests in `tests/`. Layout per [plan.md](./plan.md).
 
 ### Tests for User Story 3 (write first) ⚠️
 
-- [ ] T029 [P] [US3] `tests/test_mcp_tools.py` (catalogue portion): `list_documents`, `get_document`, `get_chunk` output shapes + not-found handling
-- [ ] T030 [P] [US3] `tests/test_mcp_resources.py`: `documents://all` and `documents://{document_id}` resource contents + unknown-id handling
-- [ ] T031 [P] [US3] `tests/test_mcp_integration.py` (resources): resource URI resolution incl. templated form over JSON-RPC
+- [X] T029 [P] [US3] `tests/test_mcp_tools.py` (catalogue portion): `list_documents`, `get_document`, `get_chunk` output shapes + not-found handling
+- [X] T030 [P] [US3] `tests/test_mcp_resources.py`: `documents://all` and `documents://{document_id}` resource contents + unknown-id handling
+- [X] T031 [P] [US3] `tests/test_mcp_integration.py` (resources): resource URI resolution incl. templated form over JSON-RPC
 
 ### Implementation for User Story 3
 
-- [ ] T032 [US3] Add `list_documents()`, `get_document(document_id)`, `get_chunk(chunk_id)` tools to `app/mcp_server.py` (depends on T014, T017)
-- [ ] T033 [US3] Add resources `documents://all` and `documents://{document_id}` (with all chunks) to `app/mcp_server.py`
-- [ ] T034 [P] [US3] Add `GET /documents` catalogue endpoint in `app/api/documents.py`
-- [ ] T035 [US3] Implement dynamic landing page in `app/landing.py` listing currently registered MCP tools/resources; wire into `GET /` (FR-019)
+- [X] T032 [US3] Add `list_documents()`, `get_document(document_id)`, `get_chunk(chunk_id)` tools to `app/mcp_server.py` (depends on T014, T017)
+- [X] T033 [US3] Add resources `documents://all` and `documents://{document_id}` (with all chunks) to `app/mcp_server.py`
+- [X] T034 [P] [US3] Add `GET /documents` catalogue endpoint in `app/api/documents.py`
+- [X] T035 [US3] Implement dynamic landing page in `app/landing.py` listing currently registered MCP tools/resources; wire into `GET /` (FR-019)
 
 **Checkpoint**: US1 + US2 + US3 work — full agent navigation surface complete.
 
@@ -144,14 +144,14 @@ tests in `tests/`. Layout per [plan.md](./plan.md).
 
 ### Tests for User Story 4 (write first) ⚠️
 
-- [ ] T036 [P] [US4] `tests/test_skill_preprocess.py`: all-stage artifacts, cleaning removes boilerplate/page numbers, chunk metadata complete, custom `--doc-id` prefix, reject unsupported ext / missing / oversized, `--format json` skips markdown, output-dir confinement (SC-005, SC-008)
+- [X] T036 [P] [US4] `tests/test_skill_preprocess.py`: all-stage artifacts, cleaning removes boilerplate/page numbers, chunk metadata complete, custom `--doc-id` prefix, reject unsupported ext / missing / oversized, `--format json` skips markdown, output-dir confinement (SC-005, SC-008)
 
 ### Implementation for User Story 4
 
-- [ ] T037 [US4] Implement `.claude/skills/document-preprocessing/scripts/preprocess.py`: argparse CLI (`--stage/--format/--out/--doc-id/--max-chars/--max-mb/--no-ocr/--stdout/--quiet`), project-root discovery (anchor `app/services/parser.py`), thin-wrap parser/cleaner/chunker, stdout(JSON)/stderr(logs) split, UTF-8, safety boundaries, single-line `error:` + exit codes 0/1/2 (depends on T010–T012)
-- [ ] T038 [P] [US4] Write `.claude/skills/document-preprocessing/SKILL.md` with name/description frontmatter for agent auto-discovery
-- [ ] T039 [P] [US4] Write `.claude/skills/document-preprocessing/reference/OUTPUT_SCHEMA.md` documenting the JSON/metadata schema
-- [ ] T040 [US4] Generate `.claude/skills/document-preprocessing/examples/RUN_LOG.md` from a real document run proving Skill/index chunk-count parity
+- [X] T037 [US4] Implement `.claude/skills/document-preprocessing/scripts/preprocess.py`: argparse CLI (`--stage/--format/--out/--doc-id/--max-chars/--max-mb/--no-ocr/--stdout/--quiet`), project-root discovery (anchor `app/services/parser.py`), thin-wrap parser/cleaner/chunker, stdout(JSON)/stderr(logs) split, UTF-8, safety boundaries, single-line `error:` + exit codes 0/1/2 (depends on T010–T012)
+- [X] T038 [P] [US4] Write `.claude/skills/document-preprocessing/SKILL.md` with name/description frontmatter for agent auto-discovery
+- [X] T039 [P] [US4] Write `.claude/skills/document-preprocessing/reference/OUTPUT_SCHEMA.md` documenting the JSON/metadata schema
+- [X] T040 [US4] Generate `.claude/skills/document-preprocessing/examples/RUN_LOG.md` from a real document run proving Skill/index chunk-count parity
 
 **Checkpoint**: All four stories independently functional; Skill output equals indexed output.
 
@@ -161,12 +161,12 @@ tests in `tests/`. Layout per [plan.md](./plan.md).
 
 **Purpose**: Deployment, docs, and final verification across all stories.
 
-- [ ] T041 [P] Author `Dockerfile` targeting `linux/arm64` (CPU-only base, pinned CPU torch), `.dockerignore`, and `docker-compose.yml` for local run
+- [X] T041 [P] Author `Dockerfile` targeting `linux/arm64` (CPU-only base, pinned CPU torch), `.dockerignore`, and `docker-compose.yml` for local run
 - [ ] T042 Verify all dependencies provide aarch64 wheels or build on ARM (torch CPU, onnxruntime, chromadb, tokenizers, Docling native deps); adjust pins as needed (research.md D8 risk watch)
 - [ ] T043 Configure Zeabur deployment with a volume mounted at `/data` (index, uploads, model cache); confirm public HTTPS URL, `/health`, `/`, `/docs`, `/mcp` reachable (FR-019, FR-020, SC-006)
-- [ ] T044 [P] Write `README.md`: AI-only workflow (plan/dev/review/test), example queries, MCP client connection, upload usage, local/Docker run, deploy URL
+- [X] T044 [P] Write `README.md`: AI-only workflow (plan/dev/review/test), example queries, MCP client connection, upload usage, local/Docker run, deploy URL
 - [ ] T045 Run `quickstart.md` scenarios A–F end-to-end against local + deployed service; confirm restart persistence and CPU-only operation
-- [ ] T046 Run full `pytest -q`; ensure all layers green and add regression tests for any defects found
+- [X] T046 Run full `pytest -q`; ensure all layers green and add regression tests for any defects found
 
 ---
 
