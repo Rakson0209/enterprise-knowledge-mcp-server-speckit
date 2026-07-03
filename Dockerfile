@@ -32,7 +32,8 @@ RUN pip install --upgrade pip \
 # Persistent volume: Chroma index, uploads, and model cache survive restart/redeploy.
 VOLUME ["/data"]
 
-EXPOSE 8000
+# Zeabur routes the public domain to 8080 and injects $PORT; bind to it (fallback 8080).
+EXPOSE 8080
 
 # Liveness: GET /health
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8080}"]

@@ -76,8 +76,8 @@ report.` · `Summarize slide 5.`
 python -m pip install -e ".[dev]"
 python -m uvicorn app.main:app --reload            # http://localhost:8000
 
-# Docker (linux/arm64 image, CPU-only)
-docker compose up --build                          # http://localhost:8000
+# Docker (CPU-only; container listens on $PORT, default 8080)
+docker compose up --build                          # http://localhost:8080
 ```
 
 Add a document (upload = auto-index, no restart):
