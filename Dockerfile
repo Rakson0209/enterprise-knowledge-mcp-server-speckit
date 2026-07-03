@@ -21,9 +21,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY pyproject.toml README.md ./
 COPY app ./app
 
-# On linux/arm64 the default PyPI torch wheel is a CPU build (no CUDA), which is exactly what the
-# GPU-less Ampere node needs. Installing the project pulls torch (CPU) + the rest transitively.
-RUN pip install --upgrade pip && pip install .
+# Install CPU-only torch FIRST. On linux/arm64 the *default* torch wheel now drags in multi-GB
+# CUDA libraries (nvidia-*-cu13, cuda-toolkit) that are useless on the GPU-less Ampere node and
+# bloat the image until the build export fails. The PyTorch CPU index serves a lean aarch64 CPU
+# wheel; once torch is satisfied, installing the project reuses it (no CUDA pulled transitively).
+RUN pip install --upgrade pip \
+ && pip install --index-url https://download.pytorch.org/whl/cpu torch \
+ && pip install .
 
 # Persistent volume: Chroma index, uploads, and model cache survive restart/redeploy.
 VOLUME ["/data"]
