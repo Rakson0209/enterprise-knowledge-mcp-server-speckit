@@ -32,11 +32,11 @@ tests in `tests/`. Layout per [plan.md](./plan.md).
 
 **Purpose**: Project initialization, dependencies, config, shared models. (PDF Step 1: `chore: initialize project`)
 
-- [ ] T001 Create project structure per plan.md (`app/`, `app/services/`, `app/api/`, `tests/`, `.claude/skills/document-preprocessing/`)
-- [ ] T002 Author `pyproject.toml` with dependencies (fastapi, uvicorn, fastmcp, docling, rapidocr-onnxruntime, sentence-transformers, rank-bm25, chromadb, pydantic, pydantic-settings) and `[dev]` extras (pytest); pin **CPU** torch wheels and document ARM64/aarch64 constraint (no CUDA)
-- [ ] T003 [P] Implement `app/config.py` (pydantic-settings): `embedding_model`, `chunk_max_chars=1200`, `header_footer_min_repeats=2`, `rrf_k=60`, `top_k_default`, `max_upload_mb=50`, `data_dir=/data`, `enable_ocr`, all env-overridable
-- [ ] T004 [P] Implement `app/models.py` Pydantic entities from data-model.md: `ParsedElement`, `ParsedDocument`, `Chunk` (8-field contract), `Document`, `SearchResult`
-- [ ] T005 [P] Configure pytest, linting/formatting, and `tests/conftest.py` with sample DOCX/PDF/PPTX fixtures
+- [X] T001 Create project structure per plan.md (`app/`, `app/services/`, `app/api/`, `tests/`, `.claude/skills/document-preprocessing/`)
+- [X] T002 Author `pyproject.toml` with dependencies (fastapi, uvicorn, fastmcp, docling, rapidocr-onnxruntime, sentence-transformers, rank-bm25, chromadb, pydantic, pydantic-settings) and `[dev]` extras (pytest); pin **CPU** torch wheels and document ARM64/aarch64 constraint (no CUDA)
+- [X] T003 [P] Implement `app/config.py` (pydantic-settings): `embedding_model`, `chunk_max_chars=1200`, `header_footer_min_repeats=2`, `rrf_k=60`, `top_k_default`, `max_upload_mb=50`, `data_dir=/data`, `enable_ocr`, all env-overridable
+- [X] T004 [P] Implement `app/models.py` Pydantic entities from data-model.md: `ParsedElement`, `ParsedDocument`, `Chunk` (8-field contract), `Document`, `SearchResult`
+- [X] T005 [P] Configure pytest, linting/formatting, and `tests/conftest.py` with sample DOCX/PDF/PPTX fixtures
 
 **Checkpoint**: Project installs (`pip install -e ".[dev]"`); config and models importable.
 
@@ -50,22 +50,22 @@ tests in `tests/`. Layout per [plan.md](./plan.md).
 
 ### Tests for Foundational (write first, ensure they fail) ⚠️
 
-- [ ] T006 [P] Unit tests `tests/test_parser.py` + `tests/test_parser_pptx.py`: structure preserved, page/slide provenance, RapidOCR figure text, ordered elements
-- [ ] T007 [P] Unit tests `tests/test_cleaner.py`: repeated header/footer removal (≥2), page-number-only lines, pure-symbol paragraphs removed; titles/tables/figures/page numbers preserved
-- [ ] T008 [P] Unit tests `tests/test_chunker.py`: semantic-boundary splits only, table/figure standalone chunks, full 8-field metadata, reproducible `<document_id>-<seq>` ids, no fixed-size splitting, page/slide change starts new chunk (SC-001, SC-002)
-- [ ] T009 [P] Index test `tests/test_index.py`: Chroma upsert + dense query + document aggregation
+- [X] T006 [P] Unit tests `tests/test_parser.py` + `tests/test_parser_pptx.py`: structure preserved, page/slide provenance, RapidOCR figure text, ordered elements
+- [X] T007 [P] Unit tests `tests/test_cleaner.py`: repeated header/footer removal (≥2), page-number-only lines, pure-symbol paragraphs removed; titles/tables/figures/page numbers preserved
+- [X] T008 [P] Unit tests `tests/test_chunker.py`: semantic-boundary splits only, table/figure standalone chunks, full 8-field metadata, reproducible `<document_id>-<seq>` ids, no fixed-size splitting, page/slide change starts new chunk (SC-001, SC-002)
+- [X] T009 [P] Index test `tests/test_index.py`: Chroma upsert + dense query + document aggregation
 
 ### Implementation for Foundational
 
-- [ ] T010 [P] Implement `app/services/parser.py`: Docling parse for DOCX/PDF/PPTX + RapidOCR image text → `ParsedDocument` with page/slide provenance
-- [ ] T011 [P] Implement `app/services/cleaner.py`: normalize whitespace; strip repeated header/footer, page-number lines, symbol-only paragraphs; preserve structure/titles/tables/figures
-- [ ] T012 Implement `app/services/chunker.py`: metadata-aware semantic-boundary chunking; each table/figure its own chunk; split only between whole elements when over `chunk_max_chars`; continuation chunks reuse `section_title` (depends on T004, T010, T011)
-- [ ] T013 [P] Implement `app/services/embedder.py`: BGE-M3 dense vectors, lazy-loaded, L2-normalized, CPU-only
-- [ ] T014 Implement `app/services/vector_store.py`: Chroma embedded/persistent (`data_dir`) — upsert, dense search, document aggregation; `get_vector_store()` singleton (depends on T013)
-- [ ] T015 Implement `app/services/pipeline.py`: orchestrate parse→clean→chunk→embed→upsert; reusable by upload endpoint and Skill (depends on T010–T014)
-- [ ] T016 Implement `app/main.py`: FastAPI app factory, shared lifespan, singletons; mount FastMCP ASGI app at `/mcp`; heavy sync work via thread pool
-- [ ] T017 Implement `app/mcp_server.py` skeleton: FastMCP instance, tool-invocation logging setup, registered with the app (tools added in later phases)
-- [ ] T018 Implement `GET /health` in `app/main.py` returning `{status:"ok"}` and a minimal landing page placeholder at `GET /`
+- [X] T010 [P] Implement `app/services/parser.py`: Docling parse for DOCX/PDF/PPTX + RapidOCR image text → `ParsedDocument` with page/slide provenance
+- [X] T011 [P] Implement `app/services/cleaner.py`: normalize whitespace; strip repeated header/footer, page-number lines, symbol-only paragraphs; preserve structure/titles/tables/figures
+- [X] T012 Implement `app/services/chunker.py`: metadata-aware semantic-boundary chunking; each table/figure its own chunk; split only between whole elements when over `chunk_max_chars`; continuation chunks reuse `section_title` (depends on T004, T010, T011)
+- [X] T013 [P] Implement `app/services/embedder.py`: BGE-M3 dense vectors, lazy-loaded, L2-normalized, CPU-only
+- [X] T014 Implement `app/services/vector_store.py`: Chroma embedded/persistent (`data_dir`) — upsert, dense search, document aggregation; `get_vector_store()` singleton (depends on T013)
+- [X] T015 Implement `app/services/pipeline.py`: orchestrate parse→clean→chunk→embed→upsert; reusable by upload endpoint and Skill (depends on T010–T014)
+- [X] T016 Implement `app/main.py`: FastAPI app factory, shared lifespan, singletons; mount FastMCP ASGI app at `/mcp`; heavy sync work via thread pool
+- [X] T017 Implement `app/mcp_server.py` skeleton: FastMCP instance, tool-invocation logging setup, registered with the app (tools added in later phases)
+- [X] T018 Implement `GET /health` in `app/main.py` returning `{status:"ok"}` and a minimal landing page placeholder at `GET /`
 
 **Checkpoint**: A document can be parsed→cleaned→chunked→indexed programmatically; foundational tests pass; server boots with `/health` and `/mcp` mounted.
 
