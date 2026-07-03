@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+import logging
 import os
 
 from fastapi import APIRouter, File, HTTPException, UploadFile
@@ -42,6 +43,7 @@ async def upload_document(file: UploadFile = File(...)):
         # Offload heavy sync work (Docling/OCR/embedding) so the event loop stays responsive.
         chunks = await asyncio.to_thread(index_document, dest, filename=filename)
     except Exception as exc:  # noqa: BLE001 - surface a clean 400 to the client
+        logging.getLogger("app.api.documents").exception("document processing failed")
         raise HTTPException(status_code=400, detail=f"failed to process document: {exc}") from exc
 
     document_id = chunks[0].document_id if chunks else _slugify(os.path.splitext(filename)[0])

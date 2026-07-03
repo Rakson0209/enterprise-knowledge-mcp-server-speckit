@@ -38,6 +38,28 @@ def create_app() -> FastAPI:
     def health() -> dict:
         return {"status": "ok"}
 
+    @app.get("/debug/selfcheck")
+    def selfcheck() -> dict:
+        """Temporary diagnostic: report which ML import stage fails on this deployment."""
+        import importlib
+        import traceback
+
+        out: dict = {}
+        stages = [
+            ("torch", lambda: importlib.import_module("torch")),
+            ("torchvision", lambda: importlib.import_module("torchvision")),
+            ("transformers", lambda: importlib.import_module("transformers")),
+            ("AutoProcessor", lambda: getattr(importlib.import_module("transformers"), "AutoProcessor")),
+            ("sentence_transformers", lambda: importlib.import_module("sentence_transformers")),
+        ]
+        for name, fn in stages:
+            try:
+                mod = fn()
+                out[name] = getattr(mod, "__version__", "ok")
+            except Exception:
+                out[name] = traceback.format_exc().splitlines()[-8:]
+        return out
+
     @app.get("/", response_class=HTMLResponse)
     def landing() -> str:
         return render_landing_page()
