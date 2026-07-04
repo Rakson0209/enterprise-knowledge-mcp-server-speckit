@@ -130,10 +130,31 @@ INFO:app.mcp_server:search_documents retrieved 3 chunk(s): [...]
 
 ## Deployment (Zeabur)
 
+**Live at → https://ek-mcp-server.zeabur.app**
+
+| Endpoint | Description |
+|----------|-------------|
+| [`/`](https://ek-mcp-server.zeabur.app/) | Landing page (dynamic MCP tool/resource listing) |
+| [`/health`](https://ek-mcp-server.zeabur.app/health) | Liveness check |
+| [`/docs`](https://ek-mcp-server.zeabur.app/docs) | REST API docs (Swagger UI) |
+| `POST /documents` | Upload a document (auto-indexed, no restart) |
+| [`/documents`](https://ek-mcp-server.zeabur.app/documents) | Catalogue of indexed documents |
+| `/mcp/` | Remote MCP endpoint |
+
+**Connect Claude Desktop / Claude Code** to the MCP endpoint:
+
+```
+https://ek-mcp-server.zeabur.app/mcp/
+```
+
+> ⚠️ The trailing slash is required. Connecting to `/mcp` (no slash) triggers a redirect that
+> breaks the MCP streamable-HTTP handshake (HTTP 400); always use **`/mcp/`**.
+
 Zeabur auto-detects the [`Dockerfile`](Dockerfile) and builds for `linux/arm64` (Arm Ampere A1,
-no GPU — all inference CPU-only). Mount a **volume at `/data`** so the Chroma index, uploads, and
-model cache persist across restart/redeploy. Configuration is via `KB_`-prefixed environment
-variables (see [`app/config.py`](app/config.py)).
+no GPU — all inference CPU-only). The public domain is served on port **8080** (the app binds
+`$PORT`). Mount a **volume at `/data`** so the Chroma index, uploads, and model cache persist
+across restart/redeploy. Configuration is via `KB_`-prefixed environment variables (see
+[`app/config.py`](app/config.py)).
 
 ## Configuration
 
