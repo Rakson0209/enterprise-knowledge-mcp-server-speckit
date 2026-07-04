@@ -87,6 +87,22 @@ curl -X POST http://localhost:8000/documents -F "file=@/path/to/report.pdf"
 # -> 201 {"document_id":"report","status":"indexed","num_chunks":42}
 ```
 
+> ### ⚠️ Dockerfile is pinned to ARM64 for Zeabur — adjust for local builds
+>
+> The [`Dockerfile`](Dockerfile) pins `FROM --platform=linux/arm64 …` **on purpose**: the
+> production node is **Zeabur Arm Ampere A1 (linux/arm64)**, so the image must be arm64.
+>
+> If you build/run **locally on a non-ARM64 machine** (e.g. an x86-64 laptop), this pin forces a
+> slow QEMU-emulated build. Adjust it to your local architecture:
+>
+> - **Easiest:** remove `--platform=linux/arm64` from the `FROM` line so Docker builds for your
+>   host's native platform (Zeabur still builds arm64 because its node is arm64).
+> - **Or** build a specific arch explicitly: `docker buildx build --platform linux/amd64 .`
+>   (local) / `--platform linux/arm64 .` (to match production).
+>
+> CPU-only inference holds on every platform — the default PyPI/CPU-index torch wheel is a CPU
+> build for both x86-64 and arm64, so this only affects the **architecture**, not GPU/CPU.
+
 ## Reusable preprocessing Skill
 
 The parse → clean → chunk core is packaged as the
